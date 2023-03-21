@@ -1,3 +1,15 @@
+const numberButtons = document.querySelectorAll(".number");
+const display = document.querySelector("#result");
+
+
+for (numberButton of numberButtons) {
+    numberButton.addEventListener("click", (event) => {
+        display.value += event.target.textContent
+    });
+}
+
+
+
 function add(a , b) {
     return a + b;
 }
