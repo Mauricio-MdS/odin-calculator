@@ -7,78 +7,80 @@ const equalButton = document.querySelector(".equal");
 const clearButton = document.querySelector(".clear");
 const backSpaceButton = document.querySelector(".backspace");
 
-const equation = [];
-const operators = ["+", "-", "*", "/"];
+let equation = [];
 let currentNumber = "";
 
 let divideByZero = false;
 let alreadyDecimal = false;
 let resultInMemory = false;
 
-window.addEventListener("keydown", (event) => {
-    switch(event.key) {
-        case "Backspace":
-        case "Delete":
-            backspace();
-            break;
-        case "=":
-            operateAll();
-            break;
-        case "Escape":
-        case "c":
-        case "C":
-            clear();
-            break;
-        case "/":
-        case "*":
-        case "+":
-        case "-":
-            operatorPressed(event.key);
-            break;
-        case ".":
-        case "0":
-        case "1":
-        case "2":
-        case "3":
-        case "4":
-        case "5":
-        case "6":
-        case "7":
-        case "8":
-        case "9":
-            numberPressed(event.key);
+initializeListeners();
+
+function initializeListeners() {
+    window.addEventListener("keydown", (event) => {
+        switch(event.key) {
+            case "Backspace":
+            case "Delete":
+                backspace();
+                break;
+            case "=":
+                operateAll();
+                break;
+            case "Escape":
+            case "c":
+            case "C":
+                clear();
+                break;
+            case "/":
+            case "*":
+            case "+":
+            case "-":
+                operatorPressed(event.key);
+                break;
+            case ".":
+            case "0":
+            case "1":
+            case "2":
+            case "3":
+            case "4":
+            case "5":
+            case "6":
+            case "7":
+            case "8":
+            case "9":
+                numberPressed(event.key);
+        }
+    })
+    
+    for (numberButton of numberButtons) {
+        numberButton.addEventListener("click", (event) => numberPressed(event.target.textContent));
     }
-})
-
-for (numberButton of numberButtons) {
-    numberButton.addEventListener("click", (event) => numberPressed(event.target.textContent));
+    
+    for (operatorButton of operatorButtons) {
+        operatorButton.addEventListener("click", (event) => operatorPressed(event.target.dataset.operation));
+    }
+    
+    equalButton.addEventListener("click", operateAll);
+    
+    clearButton.addEventListener("click", clear);
+    
+    backSpaceButton.addEventListener("click", backspace);
 }
-
-for (operatorButton of operatorButtons) {
-    operatorButton.addEventListener("click", (event) => operatorPressed(event.target.dataset.operation));
-}
-
-equalButton.addEventListener("click", operateAll);
-
-clearButton.addEventListener("click", clear);
-
-backSpaceButton.addEventListener("click", backspace);
 
 function backspace() {
     if (currentNumber) {
-        if (currentNumber.charAt(currentNumber.length - 1) == ".") alreadyDecimal = false;
-        currentNumber = currentNumber.substring(0, currentNumber.length - 1);
+        if (currentNumber.endsWith(".")) alreadyDecimal = false;
+        currentNumber = currentNumber.slice(0, -1);
     } else {
         equation.pop();
-        const lastNumber = equation.pop();
-        currentNumber = lastNumber !== undefined ? lastNumber : "";
+        currentNumber = equation.pop() || "";
     }
     updateDisplay();
 }
 
 function clear() {
     divideByZero = false;
-    while (equation.length > 0) equation.pop();
+    equation = [];
     clearCurrentNumber();
     updateDisplay();
 }
@@ -98,6 +100,10 @@ function numberPressed(number) {
         updateDisplay();
 }
 
+function isMultiplicationOrDivision(operator) {
+    return operator === "*" || operator === "/";
+}
+
 function operateAll() {
 
     if (currentNumber === "") return;
@@ -105,10 +111,8 @@ function operateAll() {
     equation.push(currentNumber);
     clearCurrentNumber();
 
-    while (equation.includes("*") || equation.includes("/")) {
-        const operatorIndex = equation.findIndex(
-            element => element === "*" || element === "/"
-        );
+    while (equation.some(isMultiplicationOrDivision)) {
+        const operatorIndex = equation.findIndex(isMultiplicationOrDivision);
         equation.splice(
             operatorIndex - 1, 
             3, 
@@ -138,12 +142,8 @@ function updateDisplay() {
         display.value = "Divide by zero? Really?";
         return;
     }
-
-    display.value = "";
-    for (element of equation) {
-        display.value += element + " "
-    }
-    display.value += currentNumber;
+    const equationString = equation.length > 0 ? equation.join(" ").concat(" ") : "";
+    display.value = equationString + currentNumber;
 }
 
 
