@@ -3,6 +3,7 @@ const PRECISION = 1_000;
 const numberButtons = document.querySelectorAll(".number");
 const operatorButtons = document.querySelectorAll(".operator");
 const equalButton = document.querySelector(".equal");
+const clearButton = document.querySelector(".clear");
 const display = document.querySelector("#result");
 
 const equation = [];
@@ -39,6 +40,12 @@ equalButton.addEventListener("click", () => {
         equation.splice(0, 3, operate(...equation.slice(0, 3)));
     }
 
+    updateDisplay();
+})
+
+clearButton.addEventListener("click", () => {
+    while (equation.length > 0) equation.pop();
+    currentNumber = "";
     updateDisplay();
 })
 
