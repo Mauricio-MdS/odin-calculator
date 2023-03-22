@@ -13,6 +13,7 @@ let currentNumber = "";
 
 let divideByZero = false;
 let alreadyDecimal = false;
+let resultInMemory = false;
 
 window.addEventListener("keydown", (event) => {
     switch(event.key) {
@@ -85,9 +86,11 @@ function clear() {
 function clearCurrentNumber() {
     currentNumber = "";
     alreadyDecimal = false;
+    resultInMemory = false;
 }
 
 function numberPressed(number) {
+        if (resultInMemory) clear();
         if (alreadyDecimal && number == ".") return;
         if (number == ".") alreadyDecimal = true;
 
@@ -116,13 +119,15 @@ function operateAll() {
     while (equation.length > 2) {
         equation.splice(0, 3, operate(...equation.slice(0, 3)));
     }
-
+    resultInMemory = true;
     updateDisplay();
 }
 
 function operatorPressed(operator) {
-    if (!currentNumber) return;
-    equation.push(currentNumber);
+    if (!resultInMemory) {
+        if (!currentNumber) return;
+        equation.push(currentNumber);
+    }
     equation.push(operator);
     clearCurrentNumber();
     updateDisplay();
