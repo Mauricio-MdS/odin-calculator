@@ -1,3 +1,5 @@
+const PRECISION = 1_000;
+
 const numberButtons = document.querySelectorAll(".number");
 const operatorButtons = document.querySelectorAll(".operator");
 const equalButton = document.querySelector(".equal");
@@ -5,7 +7,6 @@ const display = document.querySelector("#result");
 
 const equation = [];
 const operators = ["+", "-", "*", "/"];
-
 let currentNumber = "";
 
 for (numberButton of numberButtons) {
@@ -83,14 +84,21 @@ function subtract (a, b) {
 function operate(a, operator, b) {
     const x = Number(a);
     const y = Number(b);
+    let result;
     switch(operator) {
         case "+":
-            return add(x, y);
+            result = add(x, y);
+            break;
         case "/":
-            return divide(x, y);
+            result = divide(x, y);
+            break;
         case "*":
-            return multiply(x, y);
+            result = multiply(x, y);
+            break;
         case "-":
-            return subtract(x, y);
+            result = subtract(x, y);
+            break;
     }
+
+    return Math.round(result*PRECISION)/PRECISION;
 }
