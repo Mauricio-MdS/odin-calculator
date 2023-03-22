@@ -11,6 +11,7 @@ const operators = ["+", "-", "*", "/"];
 let currentNumber = "";
 
 let divideByZero = false;
+let alreadyDecimal = false;
 
 for (numberButton of numberButtons) {
     numberButton.addEventListener("click", (event) => numberButtonHandler(event.target));
@@ -25,7 +26,7 @@ equalButton.addEventListener("click", () => {
     if (currentNumber === "") return;
     
     equation.push(currentNumber);
-    currentNumber = "";
+    clearCurrentNumber();
 
     while (equation.includes("*") || equation.includes("/")) {
         const operatorIndex = equation.findIndex(
@@ -48,12 +49,20 @@ equalButton.addEventListener("click", () => {
 clearButton.addEventListener("click", () => {
     divideByZero = false;
     while (equation.length > 0) equation.pop();
-    currentNumber = "";
+    clearCurrentNumber();
     updateDisplay();
 })
 
+function clearCurrentNumber() {
+    currentNumber = "";
+    alreadyDecimal = false;
+}
+
 function numberButtonHandler(button) {
-        currentNumber += button.textContent
+        if (alreadyDecimal && button.id == "decimal") return;
+        if (button.id == "decimal") alreadyDecimal = true;
+
+        currentNumber += button.textContent;
         updateDisplay();
 }
 
@@ -61,7 +70,7 @@ function operatorButtonHandler(button) {
     if (!currentNumber) return;
     equation.push(currentNumber);
     equation.push(button.dataset.operation);
-    currentNumber = "";
+    clearCurrentNumber();
     updateDisplay();
 }
 
