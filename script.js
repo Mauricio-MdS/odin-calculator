@@ -10,6 +10,8 @@ const equation = [];
 const operators = ["+", "-", "*", "/"];
 let currentNumber = "";
 
+let divideByZero = false;
+
 for (numberButton of numberButtons) {
     numberButton.addEventListener("click", (event) => numberButtonHandler(event.target));
 }
@@ -44,6 +46,7 @@ equalButton.addEventListener("click", () => {
 })
 
 clearButton.addEventListener("click", () => {
+    divideByZero = false;
     while (equation.length > 0) equation.pop();
     currentNumber = "";
     updateDisplay();
@@ -63,6 +66,11 @@ function operatorButtonHandler(button) {
 }
 
 function updateDisplay() {
+    if (divideByZero) {
+        display.value = "Divide by zero? Really?";
+        return;
+    }
+
     display.value = "";
     for (element of equation) {
         display.value += element + " "
@@ -76,6 +84,7 @@ function add(a , b) {
 }
 
 function divide (a , b) {
+    if (b == 0) divideByZero = true;
     return a / b;
 }
 
