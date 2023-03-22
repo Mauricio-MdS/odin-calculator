@@ -1,10 +1,11 @@
 const PRECISION = 1_000;
 
+const display = document.querySelector("#result");
 const numberButtons = document.querySelectorAll(".number");
 const operatorButtons = document.querySelectorAll(".operator");
 const equalButton = document.querySelector(".equal");
 const clearButton = document.querySelector(".clear");
-const display = document.querySelector("#result");
+const backSpaceButton = document.querySelector(".backspace");
 
 const equation = [];
 const operators = ["+", "-", "*", "/"];
@@ -51,7 +52,19 @@ clearButton.addEventListener("click", () => {
     while (equation.length > 0) equation.pop();
     clearCurrentNumber();
     updateDisplay();
-})
+});
+
+backSpaceButton.addEventListener("click", () => {
+    if (currentNumber) {
+        if (currentNumber.charAt(currentNumber.length - 1) == ".") alreadyDecimal = false;
+        currentNumber = currentNumber.substring(0, currentNumber.length - 1);
+    } else {
+        equation.pop();
+        const lastNumber = equation.pop();
+        currentNumber = lastNumber !== undefined ? lastNumber : "";
+    }
+    updateDisplay();
+});
 
 function clearCurrentNumber() {
     currentNumber = "";

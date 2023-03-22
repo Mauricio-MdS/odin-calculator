@@ -40,9 +40,13 @@ body {
     cursor: pointer;
   }
   
-  .clear {
+  .clear, .backspace {
     background-color: #f00;
     color: #fff;
+  }
+
+  .backspace {
+    font-size: 1.2rem;
   }
 
   .equal {
@@ -50,7 +54,7 @@ body {
     color: #fff;
   }
   
-  .clear:hover {
+  .clear:hover, .backspace:hover {
     background-color: #ff6666;
   }
 
