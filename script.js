@@ -14,15 +14,88 @@ let currentNumber = "";
 let divideByZero = false;
 let alreadyDecimal = false;
 
+window.addEventListener("keydown", (event) => {
+    switch(event.key) {
+        case "Backspace":
+        case "Delete":
+            backspace();
+            break;
+        case "=":
+            operateAll();
+            break;
+        case "Escape":
+        case "c":
+        case "C":
+            clear();
+            break;
+        case "/":
+        case "*":
+        case "+":
+        case "-":
+            operatorPressed(event.key);
+            break;
+        case ".":
+        case "0":
+        case "1":
+        case "2":
+        case "3":
+        case "4":
+        case "5":
+        case "6":
+        case "7":
+        case "8":
+        case "9":
+            numberPressed(event.key);
+    }
+})
+
 for (numberButton of numberButtons) {
-    numberButton.addEventListener("click", (event) => numberButtonHandler(event.target));
+    numberButton.addEventListener("click", (event) => numberPressed(event.target.textContent));
 }
 
 for (operatorButton of operatorButtons) {
-    operatorButton.addEventListener("click", (event) => operatorButtonHandler(event.target));
+    operatorButton.addEventListener("click", (event) => operatorPressed(event.target.dataset.operation));
 }
 
-equalButton.addEventListener("click", () => {
+equalButton.addEventListener("click", operateAll);
+
+clearButton.addEventListener("click", clear);
+
+backSpaceButton.addEventListener("click", backspace);
+
+function backspace() {
+    if (currentNumber) {
+        if (currentNumber.charAt(currentNumber.length - 1) == ".") alreadyDecimal = false;
+        currentNumber = currentNumber.substring(0, currentNumber.length - 1);
+    } else {
+        equation.pop();
+        const lastNumber = equation.pop();
+        currentNumber = lastNumber !== undefined ? lastNumber : "";
+    }
+    updateDisplay();
+}
+
+function clear() {
+    divideByZero = false;
+    while (equation.length > 0) equation.pop();
+    clearCurrentNumber();
+    updateDisplay();
+}
+
+function clearCurrentNumber() {
+    currentNumber = "";
+    alreadyDecimal = false;
+}
+
+function numberPressed(number) {
+        if (alreadyDecimal && number == ".") return;
+        if (number == ".") alreadyDecimal = true;
+
+        currentNumber += number;
+        updateDisplay();
+}
+
+function operateAll() {
 
     if (currentNumber === "") return;
     
@@ -45,44 +118,12 @@ equalButton.addEventListener("click", () => {
     }
 
     updateDisplay();
-})
-
-clearButton.addEventListener("click", () => {
-    divideByZero = false;
-    while (equation.length > 0) equation.pop();
-    clearCurrentNumber();
-    updateDisplay();
-});
-
-backSpaceButton.addEventListener("click", () => {
-    if (currentNumber) {
-        if (currentNumber.charAt(currentNumber.length - 1) == ".") alreadyDecimal = false;
-        currentNumber = currentNumber.substring(0, currentNumber.length - 1);
-    } else {
-        equation.pop();
-        const lastNumber = equation.pop();
-        currentNumber = lastNumber !== undefined ? lastNumber : "";
-    }
-    updateDisplay();
-});
-
-function clearCurrentNumber() {
-    currentNumber = "";
-    alreadyDecimal = false;
 }
 
-function numberButtonHandler(button) {
-        if (alreadyDecimal && button.id == "decimal") return;
-        if (button.id == "decimal") alreadyDecimal = true;
-
-        currentNumber += button.textContent;
-        updateDisplay();
-}
-
-function operatorButtonHandler(button) {
+function operatorPressed(operator) {
     if (!currentNumber) return;
     equation.push(currentNumber);
-    equation.push(button.dataset.operation);
+    equation.push(operator);
     clearCurrentNumber();
     updateDisplay();
 }
