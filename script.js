@@ -17,7 +17,28 @@ for (operatorButton of operatorButtons) {
 }
 
 equalButton.addEventListener("click", () => {
-    /*TODO*/
+
+    if (currentNumber === "") return;
+    
+    equation.push(currentNumber);
+    currentNumber = "";
+
+    while (equation.includes("*") || equation.includes("/")) {
+        const operatorIndex = equation.findIndex(
+            element => element === "*" || element === "/"
+        );
+        equation.splice(
+            operatorIndex - 1, 
+            3, 
+            operate(equation[operatorIndex - 1], equation[operatorIndex], equation[operatorIndex + 1])
+        );
+    }
+
+    while (equation.length > 2) {
+        equation.splice(0, 3, operate(...equation.slice(0, 3)));
+    }
+
+    updateDisplay();
 })
 
 function numberButtonHandler(button) {
@@ -60,14 +81,16 @@ function subtract (a, b) {
 }
 
 function operate(a, operator, b) {
+    const x = Number(a);
+    const y = Number(b);
     switch(operator) {
         case "+":
-            return add(a, b);
+            return add(x, y);
         case "/":
-            return divide(a, b);
+            return divide(x, y);
         case "*":
-            return multiply(a, b);
+            return multiply(x, y);
         case "-":
-            return subtract(a, b);
+            return subtract(x, y);
     }
 }
